@@ -1,3 +1,4 @@
+
 package io.fabric8.quickstarts.camel;
 
 import java.sql.Date;

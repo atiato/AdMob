@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 
 public class addlayout {
-
+      private int id;
 	  private int  AdID;
 	  private String Layout;
       private String ButtonName;
@@ -25,7 +25,21 @@ public class addlayout {
       private String Description;
       private String Path;
 
-	    public int getAdID() {
+        
+      public int getID() {
+        return id;
+    }
+
+    public void setID(int id) {
+        this.id = id;
+    }
+      
+      
+      
+      
+      
+      
+      public int getAdID() {
 	        return AdID;
 	    }
 

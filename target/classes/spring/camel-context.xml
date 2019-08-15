@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <!-- You could also define a traditional camel context here -->
+    <!--
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="timer://foo?period=1000"/>
+            <setBody><simple>Hello World from camel-contex.xml</simple></setBody>
+            <log message=">>> ${body}"/>
+        </route>
+    </camelContext>
+    -->
+    <!--  <bean id="oracleDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@192.168.0.108:1521/orcl"/>
+        <property name="username" value="super_conf"/>
+        <property name="password" value="super_conf"/>
+    </bean> -->
+    
+    
+    
+<bean id="dataSource1" class="org.apache.commons.dbcp.BasicDataSource" 
+destroy-method="close"> 
+<property name="url" value="jdbc:sqlserver://mobadserver.database.windows.net;databaseName=Mobad" /> 
+<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" /> 
+<property name="username" value="Mobadmin" /> 
+<property name="password" value="P@ssw0rd" /></bean>  
+
+<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource1"/>
+    </bean>
+
+    <!-- policy for required transaction used in our Camel routes -->
+    <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+        <property name="transactionManager" ref="txManager"/>
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
+    </bean>
+</beans> 

@@ -1,5 +1,8 @@
 package io.fabric8.quickstarts.camel;
 
+
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -22,6 +25,7 @@ public class ads {
       private addlayout Video;
       private addlayout Image;
       private addlayout Carousel;
+      private List<CarouselItems>  CarouselItems;
 
 
 
@@ -66,7 +70,14 @@ public class ads {
 	    public void setId(int id) {
 	        this.id = id;
         }
-        
+      //  CarouselItems 
+      public List<CarouselItems> getCarouselItems() {
+        return CarouselItems;
+    }
+
+    public void setCarouselItems(List<CarouselItems> CarouselItems) {
+        this.CarouselItems = CarouselItems;
+    }       
         public addlayout getText() {
 	        return Text;
 	    }
