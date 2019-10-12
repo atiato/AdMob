@@ -265,6 +265,95 @@ public class Application extends SpringBootServletInitializer {
                                 .end()
             
                     .endRest();
+
+                    from("sql:select ID from ENG_Ads where AdLayoutID=1?"
+                    +"consumer.onConsume=update ENG_Ads set scoring=:#scoring where ID=:#Ad_ID&"
+                    +"consumer.delay=5s&"
+                    +"dataSource=dataSource")
+                    .process(new Processor(){
+
+						@Override
+						public void process(Exchange exchange) throws Exception {
+							// TODO Auto-generated method stub
+                             Map results =exchange.getIn().getBody(Map.class);
+                            System.out.println("output Clicked"+results.get("ID"));
+
+                            exchange.getIn().setHeader("Ad_ID",results.get("ID"));
+						}
+                        
+                    })  
+                    .to("log:DEBUG?showBody=true&showHeaders=true")
+
+
+                    .to("sql:select count(*) As counter_clicked from BIll_AdsBilling a, ENG_Ads b where a.Action='clicked' and b.AdLayoutID=1 and a.Ad_ID=:#Ad_ID?dataSource=dataSource")
+                   .to("log:DEBUG?showBody=true&showHeaders=true")
+                    .process(new Processor(){
+
+						@Override
+						public void process(Exchange exchange) throws Exception {
+							// TODO Auto-generated method stub
+                            List results=exchange.getIn().getBody(List.class);
+                            Map test=(Map)results.get(0);
+                            System.out.println("output Clicked"+test.get("counter_clicked"));
+
+                            exchange.getIn().setHeader("count-clicked-image",test.get("counter_clicked"));
+						}
+                        
+                    })                   .to("log:DEBUG?showBody=true&showHeaders=true")
+
+
+
+                    .to("sql:select count(*) As counter_viewed from BIll_AdsBilling a, ENG_Ads b where a.Action='Viewed' and b.AdLayoutID=1 and a.Ad_ID=:#Ad_ID?dataSource=dataSource")
+                    .to("log:DEBUG?showBody=true&showHeaders=true")
+                     .process(new Processor(){
+ 
+                         @Override
+                         public void process(Exchange exchange) throws Exception {
+                             // TODO Auto-generated method stub
+                             List results=exchange.getIn().getBody(List.class);
+                             Map test=(Map)results.get(0);
+                             System.out.println("output Viewed"+test.get("counter_viewed"));
+ 
+                             exchange.getIn().setHeader("count-viewed-image",test.get("counter_viewed"));
+                         }
+                         
+                     })                   .to("log:DEBUG?showBody=true&showHeaders=true")
+
+                     .to("sql:select count(*) As counter_Imp from BIll_AdsBilling a, ENG_Ads b where a.Action='Impression' and b.AdLayoutID=1?dataSource=dataSource")
+                     .to("log:DEBUG?showBody=true&showHeaders=true")
+                      .process(new Processor(){
+  
+                          @Override
+                          public void process(Exchange exchange) throws Exception {
+                              // TODO Auto-generated method stub
+                              List results=exchange.getIn().getBody(List.class);
+                              Map test=(Map)results.get(0);
+                              System.out.println("output Impression"+test.get("counter_Imp"));
+  
+                              exchange.getIn().setHeader("Total-Impressions-image",test.get("counter_Imp"));
+                          }
+                          
+                      })                   .to("log:DEBUG?showBody=true&showHeaders=true")
+
+                      .process(new Processor(){
+  
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            // TODO Auto-generated method stub
+                          
+                            int Imp = (int) exchange.getIn().getHeader("Total-Impressions-image");
+                            int viewed=(int) exchange.getIn().getHeader("count-viewed-image");
+                            int clicked = (int) exchange.getIn().getHeader("count-clicked-image");
+
+                            float image_scoring=(float)(viewed+clicked)/(2*Imp);
+                            exchange.getIn().setHeader("scoring",image_scoring);
+                            System.out.println("Impressions"+Imp+"viewed "+viewed+"clicked "+clicked+" Scoring is "+image_scoring+" for the Ad_ID "+exchange.getIn().getHeader("Ad_ID")+"\n");
+                        }
+                        
+                    })                   .to("log:DEBUG?showBody=true&showHeaders=true")
+                                            ;
+
+                                
               
         }
     }	

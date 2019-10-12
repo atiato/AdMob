@@ -21,7 +21,7 @@ endpoints:
 spring:
   # Spring JDBC configuration
   datasource:
-    url:      jdbc:sqlserver://mobadserver.database.windows.net;databaseName=Mobad
+    url:      jdbc:sqlserver://mobadserver.database.windows.net;databaseName=Mobad_Test
     username: Mobadmin
     password: P@ssw0rd
     driverClassName : com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -51,11 +51,7 @@ spring:
     
 
   # Spring JDBC configuration
-test:
-  datasource:
-   url: jdbc:oracle:thin:@172.20.10.2:1521/orcl
-   username: super_conf
-   password: super_conf
+
 
 # The application configuration properties
 quickstart:
